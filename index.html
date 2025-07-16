@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Text to Speech Converter</title>
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+ <style>
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  }
+
+  body {
+    background: linear-gradient(135deg, #74ebd5, #acb6e5);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 20px;
+  }
+
+  .hero {
+    background-color: #ffffffee;
+    padding: 40px 30px;
+    border-radius: 20px;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.1);
+    max-width: 550px;
+    width: 100%;
+    text-align: center;
+    animation: fadeIn 0.8s ease-in-out;
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .hero h1 {
+    font-size: 2.2rem;
+    color: #222;
+    margin-bottom: 25px;
+  }
+
+  .hero h1 span {
+    color: #007bff;
+  }
+
+  textarea {
+    width: 100%;
+    height: 160px;
+    padding: 16px;
+    font-size: 1rem;
+    border-radius: 12px;
+    border: 1px solid #bbb;
+    resize: none;
+    margin-bottom: 25px;
+    transition: border-color 0.3s, box-shadow 0.3s;
+    background-color: #fafafa;
+    color: #333;
+  }
+
+  textarea:focus {
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 0 8px rgba(0, 123, 255, 0.3);
+    background-color: #fff;
+  }
+
+  .row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+  }
+
+  select {
+    flex: 1;
+    padding: 12px 10px;
+    border-radius: 10px;
+    border: 1px solid #aaa;
+    font-size: 1rem;
+    background-color: #f0f0f0;
+    transition: border-color 0.3s, background-color 0.3s;
+  }
+
+  select:hover,
+  select:focus {
+    border-color: #007bff;
+    background-color: #fff;
+    outline: none;
+  }
+
+  button {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background-color: #007bff;
+    color: #fff;
+    padding: 12px 20px;
+    font-size: 1rem;
+    font-weight: 500;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: transform 0.2s ease, background-color 0.3s ease;
+  }
+
+  button:hover {
+    background-color: #0056b3;
+    transform: scale(1.04);
+  }
+
+  button i {
+    font-size: 1.3rem;
+  }
+
+  @media (max-width: 540px) {
+    .hero {
+      padding: 30px 20px;
+    }
+
+    .row {
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    button {
+      width: 100%;
+      justify-content: center;
+    }
+  }
+</style>
+
+</head>
+<body>
+  <div class="hero">
+    <h1>Text To Speech <span>Converter</span></h1>
+    <textarea placeholder="Write anything here"></textarea>
+    <div class="row">
+      <select></select>
+      <button><i class="ri-play-fill"></i>Listen</button>
+    </div>
+  </div>
+
+  <script>
+    let speech = new SpeechSynthesisUtterance();
+    let voices = [];
+    let voiceSelect = document.querySelector("select");
+
+    window.speechSynthesis.onvoiceschanged = () => {
+      voices = window.speechSynthesis.getVoices();
+      speech.voice = voices[0];
+
+      voices.forEach((voice, i) => {
+        const option = new Option(voice.name + " (" + voice.lang + ")", i);
+        voiceSelect.appendChild(option);
+      });
+    };
+
+    voiceSelect.addEventListener("change", () => {
+      speech.voice = voices[voiceSelect.value];
+    });
+
+    document.querySelector("button").addEventListener("click", () => {
+      const text = document.querySelector("textarea").value.trim();
+      if (text.length <= 0) {
+        speech.text = "Input field is empty";
+      } else {
+        speech.text = text;
+      }
+      window.speechSynthesis.speak(speech);
+    });
+  </script>
+</body>
+</html>
